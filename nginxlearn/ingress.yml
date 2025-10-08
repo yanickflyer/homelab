@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: my-app-ingress
+  name: learn-nginx-ingress
   namespace: learn
   annotations:
     ingressclass: "traefik"  # Specifies Traefik as the ingress controller
