@@ -21,6 +21,13 @@ spec:
           volumeMounts:
             - name: html
               mountPath: /usr/share/nginx/html
+          resources:
+            requests:
+              memory: "20Mi"
+              cpu: "10m"
+            limits:
+              memory: "100Mi"
+              cpu: "50m"
           env:
             - name: POD_NAME
               valueFrom:
