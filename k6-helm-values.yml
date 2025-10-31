@@ -1,0 +1,10 @@
+metrics:
+  serviceMonitor:
+    enabled: true
+    namespace: monitoring
+    jobLabel: k6-metrics
+
+manager:
+  logging:
+    development: false
+  replicas: 2

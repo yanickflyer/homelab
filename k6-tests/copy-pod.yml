@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: temp-data-pod
+  labels:
+    app: util-tool
+spec:
+  # This makes the Pod simple and independent (no Deployment/Job controller)
+  restartPolicy: Always 
+  
+  containers:
+  - name: util-container
+    image: busybox:stable # A lightweight image for utilities and copying
+    command: ["/bin/sh", "-c"]
+    # Keeps the container alive for roughly 100 years so you can kubectl exec/cp into it
+    args: ["sleep 3153600000"] 
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "250m"
+      limits:
+        memory: "256Mi"
+        cpu: "500m"
+    # 1. Define the VolumeMount inside the container
+    volumeMounts:
+    - name: pv-k6-tests
+      mountPath: /tests # The directory inside the container
+      
+  # 2. Define the Volume in the Pod's spec, referencing the PVC
+  volumes:
+  - name: pv-k6-tests # This name links to the volumeMounts above
+    persistentVolumeClaim:
+      claimName: pv-k6-tests # Ensure this PVC exists in your namespace
+  

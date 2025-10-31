@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-k6-pvc-scheduler
+  namespace: k6-operator-system # Ensure this matches your namespace
+spec:
+  schedule: "29 * * * *"
+  successfulJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: k6-operator-controller
+          restartPolicy: OnFailure
+          containers:
+          - name: kubectl-runner
+            image: bitnami/kubectl:latest
+            command: ["/bin/sh", "-c"]
+            args:
+            - |
+              # START of shell script logic
+              # Use <<'EOF' to ignore leading whitespace and prevent the error
+              cat <<-'EOF' > /tmp/testrun.yaml
+              apiVersion: k6.io/v1alpha1
+              kind: TestRun
+              metadata:
+                generateName: k6-test-run-
+              spec:
+                parallelism: 3
+                script:
+                  volumeClaim:
+                    name: pv-k6-tests
+                    file: tests.js
+              EOF
+              # END of shell script logic
+
+              # Apply the TestRun manifest.
+              kubectl create -f /tmp/testrun.yaml
