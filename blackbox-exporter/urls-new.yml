@@ -1,0 +1,59 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: blackbox-exporter
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  jobLabel: blackbox
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: blackbox-exporter
+  endpoints:
+    - port: http
+      path: /probe
+      interval: 30s
+      scrapeTimeout: 10s
+      params:
+        module:
+          - http_2xx
+        target:
+          - https://sretech.org
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: probe_(.*) 
+          targetLabel: __name__
+          replacement: blackbox_$1
+      relabelings:
+        - sourceLabels: [__param_target]
+          targetLabel: instance
+        - sourceLabels: [__param_target]
+          targetLabel: target
+        - targetLabel: __param_target
+          replacement: https://sretech.org
+        - targetLabel: __address__
+          replacement: blackbox-exporter-prometheus-blackbox-exporter:9115
+    - port: http
+      path: /probe
+      interval: 30s
+      scrapeTimeout: 10s
+      params:
+        module:
+          - http_2xx
+        target:
+          - https://usadaconnect.usada.org
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: probe_(.*) 
+          targetLabel: __name__
+          replacement: blackbox_$1
+      relabelings:
+        - sourceLabels: [__param_target]
+          targetLabel: instance
+        - sourceLabels: [__param_target]
+          targetLabel: target
+        - targetLabel: __param_target
+          replacement: https://usadaconnect.usada.org
+        - targetLabel: __address__
+          replacement: blackbox-exporter-prometheus-blackbox-exporter:9115

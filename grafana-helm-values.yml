@@ -8,6 +8,8 @@ prometheus:
         metrics_path: /metrics
         kubernetes_sd_configs:
           - role: pod
+            namespaces:
+              names: ['k6-operator-system']
         relabel_configs:
           - source_labels: [__meta_kubernetes_pod_label_app]
             regex: k6
