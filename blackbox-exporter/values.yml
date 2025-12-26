@@ -1,33 +1,22 @@
-# blackbox-values.yaml
-# ---
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
 
-# Add service labels for Prometheus job identification
-service:
-  labels:
-    blackbox: blackbox
-
-# This is the main configuration block for the blackbox_exporter itself.
-config:
-  modules:
-    # This is the custom module name we'll reference from Prometheus
-    http_2xx_ssl:
-      prober: http
-      timeout: 10s
-      http:
-        # Expect a successful HTTP status code (any 2xx)
-        valid_status_codes: []
-        # CRITICAL: Fails the probe if the connection is not secured with SSL/TLS
-        fail_if_not_ssl: true
-        # Ensure we only connect over TLS for cert checks
-        tls_config: {}
-        
-# ---
-# Optional: Enable the ServiceMonitor if you are using the Prometheus Operator
-# and want to define your targets dynamically via a Kubernetes object.
-# If you are configuring targets directly in Prometheus, you can omit this block.
 serviceMonitor:
   enabled: true
   defaults:
-    # Ensure this label matches the label selector in your Prometheus config
     labels:
       release: prometheus-stack
+  targets:
+    - name: sretech-org
+      url: https://sretech.org
+      module: http_2xx
+      interval: 5m
+    - name: usadaconnect
+      url: https://usadaconnect.usada.org
+      module: http_2xx
+      interval: 5m
