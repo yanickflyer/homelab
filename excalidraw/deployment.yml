@@ -14,6 +14,10 @@ spec:
         app: excalidraw
     spec:
       automountServiceAccountToken: false
+      volumes:
+        - name: excalidraw-data
+          persistentVolumeClaim:
+            claimName: excalidraw-pvc
       containers:
         - name: excalidraw
           image: excalidraw/excalidraw:latest # only latest is available
@@ -22,6 +26,9 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
+          volumeMounts:
+            - name: excalidraw-data
+              mountPath: /opt/node_app/app
           resources:
             requests:
               memory: "20Mi"
