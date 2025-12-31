@@ -3,6 +3,14 @@ prometheus:
     ruleSelectorNilUsesHelmValues: false
     serviceMonitorSelectorNilUsesHelmValues: false
     podMonitorSelectorNilUsesHelmValues: false
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: "longhorn" # Change to your cluster's storage class
+          accessModes: ["ReadWriteMany"]
+          resources:
+            requests:
+              storage: 10Gi
     additionalScrapeConfigs:
       - job_name: 'k6'
         metrics_path: /metrics
@@ -21,6 +29,13 @@ grafana:
     ingressClassName: traefik
     hosts:
       - grafana.local
+  persistence:
+    enabled: true
+    type: pvc
+    storageClassName: "longhorn" # Change to your cluster's storage class (e.g., standard, longhorn, etc.)
+    accessModes:
+      - ReadWriteMany
+    size: 10Gi
   dashboardProviders:
     dashboardproviders.yaml:
       apiVersion: 1
@@ -33,9 +48,26 @@ grafana:
           editable: true
           options:
             path: /var/lib/grafana/dashboards/k6
+        - name: 'blackbox'
+          orgId: 1
+          folder: 'blackbox'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/blackbox
   dashboards:
     k6:
       k6-load-testing:
         gnetId: 2587
         revision: 3
+        datasource: Prometheus
+    blackbox:
+      blackbox-exporter:
+        gnetId: 18538
+        revision: 1
+        datasource: Prometheus
+      blackbox-exporter2:
+        gnetId: 18896
+        revision: 1
         datasource: Prometheus
