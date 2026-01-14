@@ -13,13 +13,23 @@ spec:
       labels:
         pod: cloudflared
     spec:
+      automountServiceAccountToken: false
       securityContext:
         sysctls:
         # Allows ICMP traffic (ping, traceroute) to resources behind cloudflared.
           - name: net.ipv4.ping_group_range
             value: "65532 65532"
       containers:
-        - image: cloudflare/cloudflared:latest
+        - image: cloudflare/cloudflared:2025.11.1
+          resources:
+            requests:
+              memory: "30Mi"
+              cpu: "7m"
+              ephemeral-storage: "50Mi"
+            limits:
+              memory: "100Mi"
+              cpu: "80m"
+              ephemeral-storage: "100Mi"
           name: cloudflared
           env:
             # Defines an environment variable for the tunnel token.
