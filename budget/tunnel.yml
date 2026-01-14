@@ -24,11 +24,11 @@ spec:
           resources:
             requests:
               memory: "30Mi"
-              cpu: "7m"
+              cpu: "20m"
               ephemeral-storage: "50Mi"
             limits:
               memory: "100Mi"
-              cpu: "80m"
+              cpu: "100m"
               ephemeral-storage: "100Mi"
           name: cloudflared
           env:
