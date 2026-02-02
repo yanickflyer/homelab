@@ -20,7 +20,7 @@ spec:
             claimName: budget-pvc
       containers:
         - name: budget
-          image: actualbudget/actual-server:26.1.0-alpine # only latest is available
+          image: actualbudget/actual-server:26.2.0-alpine # only latest is available
           ports:
             - containerPort: 5006
           env:
